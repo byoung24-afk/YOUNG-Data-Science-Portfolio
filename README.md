@@ -33,11 +33,9 @@ streamlit run basic_streamlit_app/main.py
 
 
 ### 🏅 Tidy Data Project — 2008 Olympic Medalists
-```
 This project aims to clean up data from winners at the 2008 Olympics in order to better interpret what the data is telling us. This lets us understand which sports won the most medals, by how much, how men and women compare, etc. 
 - Folder: [`TidyData-Project/`](TidyData-Project/)
 - Details: see the [project README](TidyData-Project/README.md)
-``` 
 
 ## Repository Structure 
 ```
