@@ -4,7 +4,7 @@
 This project aims to clean up data from winners at the 2008 Olympics in order to better interpret what the data is telling us. This lets us understand which sports won the most medals, by how much, how men and women compare, etc. 
 
 ### Tidy Data Principles
-- Each Variable gets its own column.
+- Each variable gets its own column.
 - Each observation gets its own row.
 - Each type of thing gets its own table.
 
