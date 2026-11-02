@@ -37,6 +37,9 @@ Young-Data-Science-Portfolio/
         └── olympics_08_medalists.csv
 ```
 
+Other folders ('Week_2', 'Week_3', 'Week_4', 'Week_7') hold weekly in-class exercises        
+
+
 ---
 
 ### How to Run the Streamlit App
