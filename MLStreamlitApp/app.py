@@ -1,8 +1,8 @@
 import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, r2_score, mean_absolute_error, root_mean_squared_error
 from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
@@ -28,10 +28,13 @@ target = st.selectbox("Select the target variable:", df.columns) # Dropdown for 
 
 # Split the data into training and testing sets
 y = df[target]  # target variable
-# Stop if the target variable is not numeric
+# decide which kind of model to train based on the target variable type
 if pd.api.types.is_numeric_dtype(y) and y.nunique() > 20:
-    st.warning("This model predicts categories. Pick a category column.")
-    st.stop()
+    task = "regression"
+else:
+    task = "classification"
+
+st.write("Task type:", task) # Show the user which mode the app picked 
 
 X = df.drop(columns=target)  # features
 X = pd.get_dummies(X)
@@ -41,7 +44,10 @@ st.write(X_train.shape, X_test.shape)
 max_depth = st.slider("Max depth", 1, 10, 3) # Slider for user to select max depth
 min_samples_split = st.slider("Min samples split", 2, 20, 2) # Slider for user to select min samples split
 
-model = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_samples_split, random_state=42)  # create the model
+if task == "classification":
+    model = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_samples_split, random_state=42)  # create the model
+else:
+    model = DecisionTreeRegressor(max_depth=max_depth, min_samples_split=min_samples_split, random_state=42)  # create the model
 model.fit(X_train, y_train) # train the model on the 80%
 st.write("Model trained!")
 
@@ -49,31 +55,62 @@ st.write("Model trained!")
 
 # Make predictions and calculate metrics
 y_pred = model.predict(X_test)
-st.write("Accuracy:", f"{accuracy_score(y_test, y_pred):.2%}")
-st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
-st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
-st.write("F1 Score:", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
 
+if task == "classification":
+    st.write("Accuracy:", f"{accuracy_score(y_test, y_pred):.2%}")
+    st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
+    st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
+    st.write("F1 Score:", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
 
-# Confusion Matrix
-fig, ax = plt.subplots()                                       # blank chart
-ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax) # draw the matrix
-st.subheader("Confusion Matrix")
-st.pyplot(fig)                                                 # show it in the app
-st.caption("Confusion Matrix: each row is the actual class, each column is the predicted class. " \
-"The diagonal shows correct predictions. The off-diagonal shows misclassifications.")
+    # Confusion Matrix
+    fig, ax = plt.subplots()                                       # blank chart
+    ConfusionMatrixDisplay.from_predictions(y_test, y_pred, ax=ax) # draw the matrix
+    st.subheader("Confusion Matrix")
+    st.pyplot(fig)                                                 # show it in the app
+    st.caption("Confusion Matrix: each row is the actual class, each column is the predicted class. " \
+    "The diagonal shows correct predictions. The off-diagonal shows misclassifications.")
 
-# Explain the Metrics
-st.subheader("Metrics Explanation")
+    # Explain the Metrics
+    st.subheader("Metrics Explanation")
 
-st.write("Accuracy:" , f"{accuracy_score(y_test, y_pred):.2%}")
-st.caption("Accuracy: the % of test rows the model predicted correctly.")
+    st.write("Accuracy:" , f"{accuracy_score(y_test, y_pred):.2%}")
+    st.caption("Accuracy: the % of test rows the model predicted correctly.")
 
-st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
-st.caption("Precision: the % of positive predictions that were correct.")
+    st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
+    st.caption("Precision: the % of positive predictions that were correct.")
 
-st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
-st.caption("Recall: the % of actual positives that were predicted correctly.")
+    st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
+    st.caption("Recall: the % of actual positives that were predicted correctly.")
 
-st.write("F1 Score:", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
-st.caption("F1 Score: One score that balances precision and recall.")
+    st.write("F1 Score:", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
+    st.caption("F1 Score: One score that balances precision and recall.")
+else:
+    # Regression Metrics
+    st.write("Mean Absolute Error:", f"{mean_absolute_error(y_test, y_pred):.2f}")
+    st.write("Root Mean Squared Error:", f"{root_mean_squared_error(y_test, y_pred):.2f}")
+    st.write("R² Score:", f"{r2_score(y_test, y_pred):.2f}")
+
+    # Residual Plot
+    st.subheader("Residual Plot")
+    residuals = y_test - y_pred                 # how far off each guess was
+    fig, ax = plt.subplots()
+    ax.scatter(y_pred, residuals)               # one dot per test row
+    ax.axhline(0, color="red")                  # zero line = perfect guess
+    ax.set_xlabel("Predicted value")
+    ax.set_ylabel("Residual (actual − predicted)")
+    st.pyplot(fig)
+    st.caption("Residual plot: each dot is one test row. The red line means the model predicted perfectly. "
+               "Dots scattered randomly around the line mean the model's errors are random; "
+               "a pattern means the model is missing something.")
+
+    # Explain the Metrics
+    st.subheader("Metrics Explanation")
+
+    st.write("Mean Absolute Error:", f"{mean_absolute_error(y_test, y_pred):.2f}")
+    st.caption("Mean Absolute Error: on average, how far off the model's guesses are, in the target's units.")
+
+    st.write("Root Mean Squared Error:", f"{root_mean_squared_error(y_test, y_pred):.2f}")
+    st.caption("Root Mean Squared Error: like MAE, but big misses count extra.")
+
+    st.write("R² Score:", f"{r2_score(y_test, y_pred):.2f}")
+    st.caption("R² Score: how much of the target's ups and downs the model explains. 1 is perfect, 0 is no better than guessing the average.")
