@@ -30,7 +30,7 @@ This app fits my portfolio because it combines interactive Python and prediction
 - [App folder](https://github.com/byoung24-afk/YOUNG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
 - [Live app](https://young-data-science-portfolio-gtifiucokeftjs7ra5djlo.streamlit.app/)
 
-**Other projects:** [Portfolio Update 1](___) · [Portfolio Update 2](___)
+**Other projects:** [Portfolio Update 1](https://github.com/byoung24-afk/YOUNG-Data-Science-Portfolio/tree/main/basic_streamlit_app) · [Portfolio Update 2](https://github.com/byoung24-afk/YOUNG-Data-Science-Portfolio/tree/main/TidyData-Project)
 ---
 ### Repository Structure 
 ```
