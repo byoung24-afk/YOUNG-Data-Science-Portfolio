@@ -20,6 +20,17 @@ This project aims to clean up data from winners at the 2008 Olympics in order to
 - Folder: [`TidyData-Project/`](TidyData-Project/)
 - Details: see the [project README](TidyData-Project/README.md)
 
+## Machine Learning Streamlit App
+With this app, users can pick sample data or upload a CSV. Then the user chooses the target variable for the model to predict and sets the hyperparameters with the sliders. The app then displays metrics and a confusion matrix with the given inputs.
+
+Building this app grew my understanding on ML. It helped me understanding how different prediction models are used for different circumstances. Also, my understanding on how to make models good at predicting data instead of memorizing their training set.
+
+This app fits my portfolio because it combines interactive Python and prediction models to make an useful app.
+
+- [App folder](https://github.com/byoung24-afk/YOUNG-Data-Science-Portfolio/tree/main/MLStreamlitApp)
+- [Live app](https://young-data-science-portfolio-gtifiucokeftjs7ra5djlo.streamlit.app/)
+
+**Other projects:** [Portfolio Update 1](___) · [Portfolio Update 2](___)
 ---
 ### Repository Structure 
 ```
