@@ -28,6 +28,11 @@ target = st.selectbox("Select the target variable:", df.columns) # Dropdown for 
 
 # Split the data into training and testing sets
 y = df[target]  # target variable
+# Stop if the target variable is not numeric
+if pd.api.types.is_numeric_dtype(y) and y.nunique() > 20:
+    st.warning("This model predicts categories. Pick a category column.")
+    st.stop()
+
 X = df.drop(columns=target)  # features
 X = pd.get_dummies(X)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
