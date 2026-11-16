@@ -21,7 +21,7 @@ else:
     df = pd.read_csv(uploaded) # turn the file into a DataFrame
 st.dataframe(df.head())  # show the first 5 rows of the dataset
 
-
+df = df.dropna(axis=1, thresh=len(df) * 0.5) # drop columns with more than 50% missing values
 df = df.dropna() # drop missing values
 
 target = st.selectbox("Select the target variable:", df.columns) # Dropdown for user to select the target variable
