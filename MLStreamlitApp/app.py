@@ -7,6 +7,7 @@ from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
 st.title("Machine Learning Model Trainer")
+st.subheader("Use the sidebar to pick your data and settings, then scroll down to make a prediction!") 
 st.sidebar.header("Settings")
 
 #Radio button for user to select dataset
