@@ -36,8 +36,8 @@ else:
 
 st.write("Task type:", task) # Show the user which mode the app picked 
 
-X = df.drop(columns=target)  # features
-X = pd.get_dummies(X)
+X_raw = df.drop(columns=target)  # features, kept for the input boxes
+X = pd.get_dummies(X_raw)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 st.write(X_train.shape, X_test.shape)
 
@@ -57,10 +57,6 @@ st.write("Model trained!")
 y_pred = model.predict(X_test)
 
 if task == "classification":
-    st.write("Accuracy:", f"{accuracy_score(y_test, y_pred):.2%}")
-    st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
-    st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
-    st.write("F1 Score:", f"{f1_score(y_test, y_pred, average='weighted'):.2%}")
 
     # Confusion Matrix
     fig, ax = plt.subplots()                                       # blank chart
@@ -77,7 +73,7 @@ if task == "classification":
     st.caption("Accuracy: the % of test rows the model predicted correctly.")
 
     st.write("Precision:", f"{precision_score(y_test, y_pred, average='weighted'):.2%}")
-    st.caption("Precision: the % of positive predictions that were correct.")
+    st.caption("Precision: When the model predicted a class, how often it's right.")
 
     st.write("Recall:", f"{recall_score(y_test, y_pred, average='weighted'):.2%}")
     st.caption("Recall: the % of actual positives that were predicted correctly.")
@@ -86,10 +82,7 @@ if task == "classification":
     st.caption("F1 Score: One score that balances precision and recall.")
 else:
     # Regression Metrics
-    st.write("Mean Absolute Error:", f"{mean_absolute_error(y_test, y_pred):.2f}")
-    st.write("Root Mean Squared Error:", f"{root_mean_squared_error(y_test, y_pred):.2f}")
-    st.write("R² Score:", f"{r2_score(y_test, y_pred):.2f}")
-
+   
     # Residual Plot
     st.subheader("Residual Plot")
     residuals = y_test - y_pred                 # how far off each guess was
@@ -114,3 +107,20 @@ else:
 
     st.write("R² Score:", f"{r2_score(y_test, y_pred):.2f}")
     st.caption("R² Score: how much of the target's ups and downs the model explains. 1 is perfect, 0 is no better than guessing the average.")
+
+st.subheader("Make a Prediction")
+user_input = {}                                    # holds the user's answers
+
+for col in X_raw.columns:                          # one box per feature
+    if pd.api.types.is_numeric_dtype(X_raw[col]):
+        # number box, starting at the column's middle value
+        user_input[col] = st.number_input(col, value=float(X_raw[col].median()))
+    else:
+        user_input[col] = st.selectbox(col, options=X_raw[col].unique())
+
+if st.button("Predict"):
+    row = pd.DataFrame([user_input])                          # one-row table from the answers
+    row = pd.get_dummies(row)                                 # text to 0/1 columns
+    row = row.reindex(columns=X.columns, fill_value=0)        # match the training columns
+    prediction = model.predict(row)[0]                        # predict on the user's row
+    st.success(f"Predicted {target}: {prediction:.2f}" if task == "regression" else f"Predicted {target}: {prediction}")
