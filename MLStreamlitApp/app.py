@@ -7,12 +7,13 @@ from sklearn.metrics import ConfusionMatrixDisplay
 import matplotlib.pyplot as plt
 
 st.title("Machine Learning Model Trainer")
+st.sidebar.header("Settings")
 
 #Radio button for user to select dataset
-choice = st.radio("Choose your dataset:", ["Sample dataset (Penguins)", "Upload my own CSV"]) 
+choice = st.sidebar.radio("Choose your dataset:", ["Sample dataset (Penguins)", "Upload my own CSV"]) 
 
 if choice == "Upload my own CSV":
-    uploaded = st.file_uploader("Upload a CSV", type="csv")  # upload box
+    uploaded = st.sidebar.file_uploader("Upload a CSV", type="csv")  # upload box
     if uploaded is None:
         st.stop()              # pause the app until a file arrives
     df = pd.read_csv(uploaded)
@@ -24,7 +25,7 @@ st.dataframe(df.head())  # show the first 5 rows of the dataset
 df = df.dropna(axis=1, thresh=len(df) * 0.5) # drop columns with more than 50% missing values
 df = df.dropna() # drop missing values
 
-target = st.selectbox("Select the target variable:", df.columns) # Dropdown for user to select the target variable
+target = st.sidebar.selectbox("Select the target variable:", df.columns) # Dropdown for user to select the target variable
 
 # Split the data into training and testing sets
 y = df[target]  # target variable
@@ -41,8 +42,8 @@ X = pd.get_dummies(X_raw)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 st.write(X_train.shape, X_test.shape)
 
-max_depth = st.slider("Max depth", 1, 10, 3) # Slider for user to select max depth
-min_samples_split = st.slider("Min samples split", 2, 20, 2) # Slider for user to select min samples split
+max_depth = st.sidebar.slider("Max depth", 1, 10, 3) # Slider for user to select max depth
+min_samples_split = st.sidebar.slider("Min samples split", 2, 20, 2) # Slider for user to select min samples split
 
 if task == "classification":
     model = DecisionTreeClassifier(max_depth=max_depth, min_samples_split=min_samples_split, random_state=42)  # create the model
